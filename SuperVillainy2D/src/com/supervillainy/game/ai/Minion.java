@@ -16,8 +16,8 @@ import com.supervillainy.game.ai.tasks.Task;
 public abstract class Minion implements Comparable<Minion> {
 	
 	protected int rank;
-	protected int experience;
-	protected int experienceCap;
+	protected float experience;
+	protected float experienceCap;
 	protected ArrayList<Ability> abilities;
 	private float dimx = 50;
 	private float dimy = 30;
@@ -28,11 +28,11 @@ public abstract class Minion implements Comparable<Minion> {
 		this(0);
 	}
 	
-	public Minion(int xp){
+	public Minion(float xp){
 		this(xp, new ArrayList<Ability>());
 	}
 	
-	public Minion(int xp, ArrayList<Ability> abilities){
+	public Minion(float xp, ArrayList<Ability> abilities){
 		experience = xp;
 		this.abilities = abilities;
 	}
@@ -65,7 +65,7 @@ public abstract class Minion implements Comparable<Minion> {
 		experience += xp;
 	}
 	
-	public int getXpCap(){
+	public float getXpCap(){
 		return experienceCap;
 	}
 	
@@ -82,9 +82,12 @@ public abstract class Minion implements Comparable<Minion> {
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics graphics, float x, float y, boolean selected){
 		this.x = x;
 		this.y = y;
+		float dimXp = (experience/experienceCap) * dimx;
 		graphics.setColor(new Color(r, g, b, a));
 		if (selected) graphics.setColor(new Color(r, g, b, a/2f));
 		graphics.fill(new Rectangle(x, y, dimx, dimy));
+		graphics.setColor(new Color(1f,1f,1f,0.2f));
+		graphics.fill(new Rectangle(x, y, dimXp, dimy));
 		graphics.setColor(Color.black);
 		graphics.drawString(this.getClass().getSimpleName(), x, y);
 	}

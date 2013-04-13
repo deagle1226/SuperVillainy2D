@@ -3,6 +3,7 @@ package com.supervillainy.game;
 import java.awt.Font;
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -14,9 +15,6 @@ public class GameWindow extends StateBasedGame {
 
 	public static final int WINDOW_WIDTH = 1280;
 	public static final int WINDOW_HEIGHT = 720;
-	
-	private ArrayList<GameState> states;
-	private GameState currentState;
 	
 	public GameWindow() {
 		super("Super Villainy");
@@ -30,6 +28,17 @@ public class GameWindow extends StateBasedGame {
 		this.addState(new StartMenuState());
 		this.addState(new MinionState());
 		this.addState(new BattleState());
+	}
+
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException {
+		if (gc.getInput().isKeyPressed(Keyboard.KEY_ESCAPE)){
+			if (getCurrentStateID() == 0){
+				System.exit(0);
+			}
+			enterState(0);
+		}
+		super.update(gc, delta);
 	}
 
 	public static void main(String[] args) throws SlickException{

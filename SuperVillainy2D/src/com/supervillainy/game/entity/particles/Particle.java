@@ -10,22 +10,31 @@ import com.supervillainy.game.entity.EntityManager;
 
 public class Particle {
 	
-	public static final float life = 300f;
+	private float life = 300f;
 	
 	private float size = 5;
 	
 	private float fade;
 	private Vector2f pos;
 	private float r,g,b,a;
+	private Color color;
 	
-	public Particle(Vector2f pos){
+	public Particle(Vector2f pos, float size, float life, float freq){
+		this.life = life;
 		fade = life;
 		this.pos = pos;
-		r = 1f;
-		g = 1f;
-		b = 1f;
+		double r = Math.random()*100;
+		if (r < freq*1){
+			color = Color.red;
+		} else if (r < freq*2){
+			color = Color.green;
+		} else if (r < freq*3){
+			color = Color.blue;
+		} else {
+			color = Color.white;
+		}
 		a = 1f;
-		size = (float) (Math.random()*5 + 3);			
+		this.size = (float) (Math.random()*size + 3);			
 	}
 	
 	public void update(ParticleManager manager, int delta){
@@ -37,9 +46,9 @@ public class Particle {
 	}
 
 	public void render(Graphics graphics) {
-		graphics.setColor(new Color(r,g,b,a/2));
+		graphics.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), a/2));
 		graphics.fill(new Rectangle(pos.x, pos.y, size, size));
-		graphics.setColor(new Color(r,g,b,a));
+		graphics.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), a));
 		graphics.draw(new Rectangle(pos.x, pos.y, size, size));
 	}
 

@@ -12,6 +12,7 @@ import com.supervillainy.game.entity.Entity;
 import com.supervillainy.game.entity.EntityManager;
 import com.supervillainy.game.entity.Player;
 import com.supervillainy.game.entity.particles.Particle;
+import com.supervillainy.game.map.Map;
 
 public class BattleState extends BasicGameState implements EntityManager {
 	
@@ -23,17 +24,21 @@ public class BattleState extends BasicGameState implements EntityManager {
 	private ArrayList<Entity> addList = new ArrayList<Entity>();
 	/** The list of entities to be removed at the next opportunity */
 	private ArrayList<Entity> removeList = new ArrayList<Entity>();
+	
+	private Map map;
 
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		player = new Player();
 		entities.add(player);
+		map = new Map();
 	}
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
+		map.render(g);
 		for (Entity e : entities){
 			e.render(g);
 		}
@@ -42,6 +47,7 @@ public class BattleState extends BasicGameState implements EntityManager {
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta)
 			throws SlickException {	
+		map.update(delta);
 		for (int i=0;i<entities.size();i++) {
 			Entity entity = (Entity) entities.get(i);
 			

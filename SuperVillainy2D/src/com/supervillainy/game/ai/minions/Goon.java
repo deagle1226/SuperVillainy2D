@@ -9,8 +9,8 @@ public class Goon extends Minion {
 		rank = 1;
 		experienceCap = 100;
 		r = 1f;
-		g = 1f;
-		b = 1f;
+		g = 0.5f;
+		b = 0.5f;
 		a = 1f;
 	}
 
