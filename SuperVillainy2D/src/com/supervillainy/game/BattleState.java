@@ -11,6 +11,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import com.supervillainy.game.entity.Entity;
 import com.supervillainy.game.entity.EntityManager;
 import com.supervillainy.game.entity.Player;
+import com.supervillainy.game.entity.particles.Particle;
 
 public class BattleState extends BasicGameState implements EntityManager {
 	

@@ -5,9 +5,11 @@ import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.supervillainy.game.GameWindow;
+import com.supervillainy.game.entity.particles.ParticleManager;
 
 
 public class Player extends AbstractEntity {
@@ -17,6 +19,7 @@ public class Player extends AbstractEntity {
 	private float r, g, b, a;
 	
 	private Vector2f orientation;
+	private ParticleManager particles;
 	
 	public Player(){
 		pos = new Vector2f(100f,100f);
@@ -26,13 +29,15 @@ public class Player extends AbstractEntity {
 		b = 1f;
 		g = 1f;
 		a = 1f;
+		particles = new ParticleManager();
 	}
 	
 	@Override
 	public void update(EntityManager manager, int delta) {
 		updateKeys(manager, delta);
 		updateMouse(manager, delta);
-		
+		Vector2f temp = new Vector2f(pos);
+		particles.update(temp.add(new Vector2f(size()/2-4,size()/2-4)), delta);
 		super.update(manager, delta);
 	}
 
@@ -77,10 +82,17 @@ public class Player extends AbstractEntity {
 
 	@Override
 	public void render(Graphics graphics) {
+		particles.render(graphics);
+//		graphics.setColor(new Color(r,g,b,a));
+//		graphics.fill(new Circle(pos.x,pos.y,size()));
+//		graphics.setAntiAlias(true);
+//		graphics.draw(new Circle(pos.x,pos.y,size()));
 		graphics.setColor(new Color(r,g,b,a));
-		graphics.fill(new Circle(pos.x,pos.y,size()));
+		graphics.fill(new Rectangle(pos.x,pos.y,size(),size()));
 		graphics.setAntiAlias(true);
-		graphics.draw(new Circle(pos.x,pos.y,size()));
+		graphics.setColor(new Color(r,g,b,a));
+		graphics.draw(new Rectangle(pos.x,pos.y,size(),size()));
+		
 	}
 
 }
