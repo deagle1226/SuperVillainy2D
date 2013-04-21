@@ -34,7 +34,7 @@ public class ParticleManager {
 		this.colorFreq = freq;
 	}
 	
-	public void update(Vector2f pos, int delta){
+	public void update(Vector2f pos, int delta, Vector2f vel){
 		tick -= delta;
 		if (tick < 0){
 			tick = freq;
@@ -49,7 +49,7 @@ public class ParticleManager {
 		add.clear();
 		
 		for (Particle p : particles){
-			p.update(this, delta);
+			p.update(this, delta, vel);
 		}
 	}
 

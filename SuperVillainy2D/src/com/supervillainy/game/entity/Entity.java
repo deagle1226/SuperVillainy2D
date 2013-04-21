@@ -1,6 +1,7 @@
 package com.supervillainy.game.entity;
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
 
 public interface Entity {
@@ -9,12 +10,10 @@ public interface Entity {
 	
 	public void render(Graphics graphics);
 	
-	public float size();
-	
-	public Vector2f pos();
-	
 	public void collide(EntityManager manager, Entity other);
 	
 	public boolean collides(Entity other);
+	
+	public Shape getShape();
 
 }

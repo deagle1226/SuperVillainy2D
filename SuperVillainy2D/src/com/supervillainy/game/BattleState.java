@@ -26,18 +26,22 @@ public class BattleState extends BasicGameState implements EntityManager {
 	private ArrayList<Entity> removeList = new ArrayList<Entity>();
 	
 	private Map map;
+	
+	public static float rotation = 0f;
 
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		player = new Player();
-		entities.add(player);
+		entities.add(player);		
 		map = new Map();
 	}
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
+		g.setAntiAlias(true);
+		g.rotate(GameWindow.WINDOW_WIDTH/2, GameWindow.WINDOW_HEIGHT/2, rotation);
 		map.render(g);
 		for (Entity e : entities){
 			e.render(g);
@@ -46,7 +50,7 @@ public class BattleState extends BasicGameState implements EntityManager {
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta)
-			throws SlickException {	
+			throws SlickException {			
 		map.update(delta);
 		for (int i=0;i<entities.size();i++) {
 			Entity entity = (Entity) entities.get(i);

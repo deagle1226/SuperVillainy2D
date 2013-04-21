@@ -10,32 +10,39 @@ import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.supervillainy.game.BattleState;
 import com.supervillainy.game.GameWindow;
 import com.supervillainy.game.entity.particles.ParticleManager;
 import com.supervillainy.game.map.Map;
+import com.supervillainy.game.power.BasicPunch;
+import com.supervillainy.game.power.BitStream;
+import com.supervillainy.game.power.MeleePower;
+import com.supervillainy.game.power.Power;
 
 
 public class Player extends AbstractEntity {
 	 
-	private float speed = 5f;
+	private float speed = 0.25f;
 	
 	private float r, g, b, a;
 	
 	private Vector2f orientation;
 	private ParticleManager particles;
 	private Vector2f relPos;
-	private Shape shape;
 	
 	private int shotTime = 0;
 	private int shotFreq = 1;
+	private int meleeTime = 0;
+	private int meleeFreq = 900;
 	
 	private Rectangle bounds = new Rectangle(GameWindow.WINDOW_WIDTH/2-GameWindow.WINDOW_WIDTH/4,
 			GameWindow.WINDOW_HEIGHT/2-GameWindow.WINDOW_HEIGHT/4,
 			GameWindow.WINDOW_WIDTH/2,
 			GameWindow.WINDOW_HEIGHT/2);
 	
+	private MeleePower melee;
+	
 	public Player(){
-		pos = new Vector2f(GameWindow.WINDOW_WIDTH/2,GameWindow.WINDOW_HEIGHT/2);
 		vel = new Vector2f(0f,0f);
 		orientation = new Vector2f(1f,0f);
 		r = 1f;
@@ -43,82 +50,101 @@ public class Player extends AbstractEntity {
 		g = 1f;
 		a = 1f;
 		particles = new ParticleManager(7f, 300f, 3, 5);
-		shape = new Rectangle(pos.x,pos.y,size(),size());
+		shape = new Rectangle(GameWindow.WINDOW_WIDTH/2,GameWindow.WINDOW_HEIGHT/2,30,30);
+		melee = new BasicPunch(0);
 	}
 	
 	@Override
 	public void update(EntityManager manager, int delta) {
-		relPos = new Vector2f(pos.x-Map.pos.x,pos.y-Map.pos.y);
+		relPos = new Vector2f(shape.getX()-Map.pos.x,shape.getY()-Map.pos.y);
 		updateKeys(manager, delta);
 		updateMouse(manager, delta);
-		Vector2f temp = new Vector2f(pos);
-		particles.update(temp.add(new Vector2f(size()/2-4,size()/2-4)), delta);
+		Vector2f temp = new Vector2f(shape.getX(), shape.getY());
+		particles.update(temp.add(new Vector2f(shape.getWidth()/2-4,shape.getWidth()/2-4)), delta, Map.vel);
 		super.update(manager, delta);
-		shape.setLocation(pos.x, pos.y);
+		float rotation = ((relPos.x + shape.getWidth()/2 - Map.dim.x/2) - (relPos.y + shape.getHeight()/2 - Map.dim.y/2))/300;
+		BattleState.rotation = rotation;
 	}
 
 	private void updateKeys(EntityManager manager, int delta) {
+		
 		vel.y = 0;
 		vel.x = 0;
 		Map.changeVel(new Vector2f(0,0));
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)){
-			vel.y = -speed;
-			if (pos.y <= bounds.getY()){
+			if (!melee.active()) vel.y = -speed;
+			if (shape.getY() <= bounds.getY()){
 				vel.y = 0;
-				Map.changeVel(new Vector2f(0,speed));
-				if (Map.pos.y >= pos.y){
+				if (!melee.active())Map.changeVel(new Vector2f(0,speed).scale(delta));
+				if (Map.pos.y >= shape.getY()){
 					Map.changeVel(new Vector2f(0,0));
 				}
 			}
+
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)){
-			vel.y = speed;
-			if (pos.y >= bounds.getY() + bounds.getHeight()-size()){
+			if (!melee.active()) vel.y = speed;
+			if (shape.getY() >= bounds.getY() + bounds.getHeight()-shape.getHeight()){
 				vel.y = 0;
-				Map.changeVel(new Vector2f(0,-speed));
-				if (Map.pos.y+Map.dim.y <= pos.y+size()){
+				if (!melee.active())Map.changeVel(new Vector2f(0,-speed).scale(delta));
+				if (Map.pos.y+Map.dim.y <= shape.getY()+shape.getHeight()){
 					Map.changeVel(new Vector2f(0,0));
 				}
 			}
-		}
+		} 
+		
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)){
-			vel.x = speed;
-			if (pos.x >= bounds.getX() + bounds.getWidth()-size()){
+			if (!melee.active()) {
+				vel.x = speed;
+				
+			}
+			if (shape.getX() >= bounds.getX() + bounds.getWidth()-shape.getWidth()){
 				vel.x = 0;
-				Map.changeVel(new Vector2f(-speed,0));
-				if (Map.pos.x+Map.dim.x <= pos.x+size()){
+				if (!melee.active()){
+					Map.changeVel(new Vector2f(-speed,0).scale(delta));
+				}
+				if (Map.pos.x+Map.dim.x <= shape.getX()+shape.getWidth()){
 					Map.changeVel(new Vector2f(0,0));
 				}
 			}
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_A)){
-			vel.x = -speed;
-			if (pos.x < bounds.getX()){
+			if (!melee.active()) {
+				vel.x = -speed;
+			}
+			if (shape.getX() < bounds.getX()){
 				vel.x = 0;
-				Map.changeVel(new Vector2f(speed,0));
-				if (Map.pos.x >= pos.x){
+				if (!melee.active()) {
+					Map.changeVel(new Vector2f(speed,0).scale(delta));
+				}
+				if (Map.pos.x >= shape.getX()){
 					Map.changeVel(new Vector2f(0,0));
 				}
 			}
 		}
+		
 	}
 
 	private void updateMouse(EntityManager manager, int delta) {
 		Vector2f mouse = new Vector2f(Mouse.getX(), GameWindow.WINDOW_HEIGHT-Mouse.getY());
-		Vector2f dist = mouse.sub(pos);
+		Vector2f dist = mouse.sub(new Vector2f(shape.getX(), shape.getY())).sub(new Vector2f(shape.getWidth()/2, shape.getWidth()/2));
 		orientation = dist.normalise();
 		rotation = (float) ((-Math.atan2(orientation.x, orientation.y) * 180 / Math.PI) + 180);
 		shotTime -= delta;
 		if (shotTime < 0){
 			if (Mouse.isButtonDown(0)){
-				Shot shot = new Shot(new Vector2f(relPos.x+size()/2, relPos.y+size()/2), orientation);
+				Power shot = new BitStream(new Vector2f(shape.getX()+shape.getWidth()/2, shape.getY()+shape.getWidth()/2), orientation);
 				manager.addEntity(shot);
 				shotTime = shotFreq;
 			}
+			
 		}
-	}
-
-	@Override
-	public float size() {
-		return 30;
+		meleeTime -= delta;
+		if (meleeTime < 0){
+			if (Mouse.isButtonDown(1)){
+				melee = new BasicPunch(new Vector2f(shape.getX()+shape.getWidth()/2, shape.getY()+shape.getHeight()/2), (float) orientation.getTheta());
+				manager.addEntity(melee);
+				meleeTime = meleeFreq;
+			}
+		}
 	}
 
 	@Override

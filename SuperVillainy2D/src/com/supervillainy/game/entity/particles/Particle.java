@@ -37,7 +37,8 @@ public class Particle {
 		this.size = (float) (Math.random()*size + 3);			
 	}
 	
-	public void update(ParticleManager manager, int delta){
+	public void update(ParticleManager manager, int delta, Vector2f vel){
+		pos = pos.add(vel);
 		fade-=delta;
 		a = (fade*fade)/(life*life);
 		if (fade < 0){
