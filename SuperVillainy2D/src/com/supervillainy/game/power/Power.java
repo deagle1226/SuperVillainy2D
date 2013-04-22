@@ -1,5 +1,6 @@
 package com.supervillainy.game.power;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
@@ -12,6 +13,7 @@ public abstract class Power implements Entity {
 
 	@Override
 	public void render(Graphics graphics) {
+		graphics.setColor(Color.white);
 		graphics.fill(shape);
 	}
 
@@ -24,6 +26,8 @@ public abstract class Power implements Entity {
 	public Shape getShape() {
 		return shape;
 	}
+	
+	public abstract int getDamage();
 	
 
 }

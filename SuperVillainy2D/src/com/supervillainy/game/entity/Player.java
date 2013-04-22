@@ -18,6 +18,7 @@ import com.supervillainy.game.power.BasicPunch;
 import com.supervillainy.game.power.BitStream;
 import com.supervillainy.game.power.MeleePower;
 import com.supervillainy.game.power.Power;
+import com.supervillainy.game.power.enemy.EnemyPower;
 
 
 public class Player extends AbstractEntity {
@@ -31,7 +32,7 @@ public class Player extends AbstractEntity {
 	private Vector2f relPos;
 	
 	private int shotTime = 0;
-	private int shotFreq = 1;
+	private int shotFreq = 300;
 	private int meleeTime = 0;
 	private int meleeFreq = 900;
 	
@@ -41,6 +42,8 @@ public class Player extends AbstractEntity {
 			GameWindow.WINDOW_HEIGHT/2);
 	
 	private MeleePower melee;
+	
+	private int health;
 	
 	public Player(){
 		vel = new Vector2f(0f,0f);
@@ -52,6 +55,7 @@ public class Player extends AbstractEntity {
 		particles = new ParticleManager(7f, 300f, 3, 5);
 		shape = new Rectangle(GameWindow.WINDOW_WIDTH/2,GameWindow.WINDOW_HEIGHT/2,30,30);
 		melee = new BasicPunch(0);
+		health = 100;
 	}
 	
 	@Override
@@ -61,7 +65,7 @@ public class Player extends AbstractEntity {
 		updateMouse(manager, delta);
 		Vector2f temp = new Vector2f(shape.getX(), shape.getY());
 		particles.update(temp.add(new Vector2f(shape.getWidth()/2-4,shape.getWidth()/2-4)), delta, Map.vel);
-		super.update(manager, delta);
+		shape.setLocation(shape.getX() + vel.x*delta, shape.getY() + vel.y*delta);
 		float rotation = ((relPos.x + shape.getWidth()/2 - Map.dim.x/2) - (relPos.y + shape.getHeight()/2 - Map.dim.y/2))/300;
 		BattleState.rotation = rotation;
 	}
@@ -149,8 +153,9 @@ public class Player extends AbstractEntity {
 
 	@Override
 	public void collide(EntityManager manager, Entity other) {
-		// TODO Auto-generated method stub
-		
+		if (other instanceof EnemyPower){
+			health -= ((EnemyPower) other).getDamage();
+		}
 	}
 
 	@Override
@@ -167,6 +172,14 @@ public class Player extends AbstractEntity {
 		graphics.draw(shape);
 		//graphics.draw(bounds);
 		
+	}
+	
+	public Vector2f getPos(){
+		return new Vector2f(shape.getX(), shape.getY());
+	}
+	
+	public int getHealth() {
+		return health;
 	}
 
 }

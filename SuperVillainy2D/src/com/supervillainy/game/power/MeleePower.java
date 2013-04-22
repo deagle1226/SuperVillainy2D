@@ -13,12 +13,12 @@ public abstract class MeleePower extends Power {
 	@Override
 	public void render(Graphics graphics) {
 		graphics.setAntiAlias(false);
-		graphics.rotate(shape.getX(), shape.getY()+shape.getHeight()/2, rot);
+		//graphics.rotate(shape.getX(), shape.getY()+shape.getHeight()/2, rot);
 		graphics.setColor(Color.white);
 		graphics.fill(shape);
 		graphics.setAntiAlias(true);
 		graphics.draw(shape);
-		graphics.resetTransform();
+		//graphics.resetTransform();
 	}
 	
 	public abstract boolean active();

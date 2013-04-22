@@ -18,7 +18,7 @@ public class BitStream extends RangedPower {
 	
 	public BitStream(Vector2f pos, Vector2f rot){
 		vel = rot.scale(speed);
-		shape = new Circle(pos.x, pos.y, 5f);
+		shape = new Circle(pos.x-2.5f, pos.y-2.5f, 5f);
 		particles = new ParticleManager(2.5f, 150f, 6, 30);
 	}
 	
@@ -43,6 +43,11 @@ public class BitStream extends RangedPower {
 	public void collide(EntityManager manager, Entity other) {
 		
 		
+	}
+
+	@Override
+	public int getDamage() {
+		return 1;
 	}
 
 }

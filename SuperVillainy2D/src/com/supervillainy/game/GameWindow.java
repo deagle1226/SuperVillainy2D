@@ -10,6 +10,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 public class GameWindow extends StateBasedGame {
 
@@ -23,7 +25,6 @@ public class GameWindow extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer gc) throws SlickException {
 		gc.setTargetFrameRate(60);
-		gc.getGraphics().setAntiAlias(true);
 		gc.getGraphics().setFont(new TrueTypeFont(new Font("Oswald", Font.PLAIN, 18), true));
 		this.addState(new StartMenuState());
 		this.addState(new MinionState());
@@ -36,7 +37,7 @@ public class GameWindow extends StateBasedGame {
 			if (getCurrentStateID() == 0){
 				System.exit(0);
 			}
-			enterState(0);
+			enterState(0, new FadeOutTransition(), new FadeInTransition());
 		}
 		super.update(gc, delta);
 	}

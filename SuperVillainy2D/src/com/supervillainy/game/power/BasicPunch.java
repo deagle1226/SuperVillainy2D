@@ -6,17 +6,19 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.supervillainy.game.entity.Entity;
 import com.supervillainy.game.entity.EntityManager;
+import com.supervillainy.game.entity.enemy.Enemy;
 
 public class BasicPunch extends MeleePower {
 	
-	private float maxLife = 750;
+	private float maxLife = 250;
 	private float life;
 	private float x = 1f;
 	private float speed = 2.5f;
 	
 	public BasicPunch(Vector2f pos, float rot){
-		this.rot = rot;
-		shape = new Rectangle(pos.x, pos.y-10, 100, 20);
+		this.rot = (float) (rot * (Math.PI/180f));
+		shape = new Rectangle(pos.x, pos.y-10, 50, 20);
+		shape = shape.transform(Transform.createRotateTransform(this.rot, pos.x, pos.y));
 		life = maxLife;
 	}
 	
@@ -36,18 +38,21 @@ public class BasicPunch extends MeleePower {
 		if (life < 0){
 			manager.removeEntity(this);
 		}
-		((Rectangle) shape).setWidth(x);
+		//((Rectangle) shape).setWidth(x);
 	}
 
 	@Override
 	public void collide(EntityManager manager, Entity other) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public boolean active() {
 		return life > 0;
+	}
+
+	@Override
+	public int getDamage() {
+		return 2;
 	}
 
 }

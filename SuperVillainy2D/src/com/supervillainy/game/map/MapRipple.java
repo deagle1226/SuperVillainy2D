@@ -19,7 +19,7 @@ public class MapRipple {
 		color = new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 0.2f);
 		double r = Math.random();
 		if (r < 0.8){
-			color = Color.black;
+			color = new Color(0, 0, 0, 0.5f);
 		}
 		
 	}

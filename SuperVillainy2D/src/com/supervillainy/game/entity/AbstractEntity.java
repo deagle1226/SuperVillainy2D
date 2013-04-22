@@ -4,6 +4,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.supervillainy.game.map.Map;
+
 public abstract class AbstractEntity implements Entity {
 	
 	protected float rotation;
@@ -12,7 +14,7 @@ public abstract class AbstractEntity implements Entity {
 
 	@Override
 	public void update(EntityManager manager, int delta) {
-		shape.setLocation(shape.getX() + vel.x*delta, shape.getY() + vel.y*delta);
+		shape.setLocation((shape.getX()+Map.vel.x) + vel.x*delta, (shape.getY()+Map.vel.y) + vel.y*delta);
 	}
 
 	@Override
