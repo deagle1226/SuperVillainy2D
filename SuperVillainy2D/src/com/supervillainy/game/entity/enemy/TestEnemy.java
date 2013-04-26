@@ -29,10 +29,10 @@ public class TestEnemy extends Enemy {
 		time -= delta;
 		Vector2f orientation = player.getPos().sub(new Vector2f(shape.getX(),shape.getY()));
 		Vector2f temp = new Vector2f(orientation);
-		vel = temp.normalise().scale(0.1f);
+		vel = temp.normalise().scale(-0.1f);
 		if (time < 0){
 			time = freq;
-			manager.addEntity(new EnemyShot(new Vector2f(shape.getX(), shape.getY()), orientation.normalise()));
+			//manager.addEntity(new EnemyShot(new Vector2f(shape.getX(), shape.getY()), orientation.normalise()));
 		}
 	}
 

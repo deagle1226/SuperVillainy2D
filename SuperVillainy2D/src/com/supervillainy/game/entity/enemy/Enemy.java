@@ -39,4 +39,12 @@ public class Enemy extends AbstractEntity {
 		}
 	}
 
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
 }

@@ -1,23 +1,24 @@
-package com.supervillainy.game.power;
+package com.supervillainy.game.entity.environment;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.geom.Vector2f;
 
 import com.supervillainy.game.entity.Entity;
+import com.supervillainy.game.entity.EntityManager;
+import com.supervillainy.game.map.Map;
 
-public abstract class Power implements Entity {
+public abstract class Piece implements Entity {
 	
 	protected Shape shape;
+	
+	@Override
+	public void update(EntityManager manager, int delta) {
+		shape.setLocation(shape.getX()+Map.vel.x, shape.getY()+Map.vel.y);
+	}
 
 	@Override
 	public void render(Graphics graphics) {
-		graphics.setAntiAlias(false);
-		graphics.setColor(Color.white);
 		graphics.fill(shape);
-		graphics.setAntiAlias(true);
-		graphics.draw(shape);
 	}
 
 	@Override
@@ -29,8 +30,5 @@ public abstract class Power implements Entity {
 	public Shape getShape() {
 		return shape;
 	}
-	
-	public abstract int getDamage();
-	
 
 }

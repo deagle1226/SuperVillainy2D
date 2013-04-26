@@ -1,5 +1,7 @@
 package com.supervillainy.game.entity;
 
+import java.util.ArrayList;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
@@ -12,12 +14,15 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.supervillainy.game.BattleState;
 import com.supervillainy.game.GameWindow;
+import com.supervillainy.game.entity.environment.Impassable;
 import com.supervillainy.game.entity.particles.ParticleManager;
 import com.supervillainy.game.map.Map;
 import com.supervillainy.game.power.BasicPunch;
 import com.supervillainy.game.power.BitStream;
+import com.supervillainy.game.power.Blade;
 import com.supervillainy.game.power.MeleePower;
 import com.supervillainy.game.power.Power;
+import com.supervillainy.game.power.Shot;
 import com.supervillainy.game.power.enemy.EnemyPower;
 
 
@@ -45,6 +50,8 @@ public class Player extends AbstractEntity {
 	
 	private int health;
 	
+	private ArrayList<Power> powers = new ArrayList<Power>();
+	
 	public Player(){
 		vel = new Vector2f(0f,0f);
 		orientation = new Vector2f(1f,0f);
@@ -53,7 +60,7 @@ public class Player extends AbstractEntity {
 		g = 1f;
 		a = 1f;
 		particles = new ParticleManager(7f, 300f, 3, 5);
-		shape = new Rectangle(GameWindow.WINDOW_WIDTH/2,GameWindow.WINDOW_HEIGHT/2,30,30);
+		shape = new Rectangle(GameWindow.WINDOW_WIDTH/2+100,GameWindow.WINDOW_HEIGHT/2+100,30,30);
 		melee = new BasicPunch(0);
 		health = 100;
 	}
@@ -68,10 +75,16 @@ public class Player extends AbstractEntity {
 		shape.setLocation(shape.getX() + vel.x*delta, shape.getY() + vel.y*delta);
 		float rotation = ((relPos.x + shape.getWidth()/2 - Map.dim.x/2) - (relPos.y + shape.getHeight()/2 - Map.dim.y/2))/300;
 		BattleState.rotation = rotation;
+		((Blade) powers.get(0)).setRot((float) orientation.getTheta());
 	}
 
 	private void updateKeys(EntityManager manager, int delta) {
-		
+//		if (Keyboard.isKeyDown(Keyboard.KEY_Q)){
+//			((Blade) powers.get(0)).activate();
+//		}
+//		if (Keyboard.isKeyDown(Keyboard.KEY_E)){
+//			((Blade) powers.get(1)).activate();
+//		}
 		vel.y = 0;
 		vel.x = 0;
 		Map.changeVel(new Vector2f(0,0));
@@ -125,30 +138,28 @@ public class Player extends AbstractEntity {
 			}
 		}
 		
+		
+		
 	}
 
 	private void updateMouse(EntityManager manager, int delta) {
 		Vector2f mouse = new Vector2f(Mouse.getX(), GameWindow.WINDOW_HEIGHT-Mouse.getY());
 		Vector2f dist = mouse.sub(new Vector2f(shape.getX(), shape.getY())).sub(new Vector2f(shape.getWidth()/2, shape.getWidth()/2));
 		orientation = dist.normalise();
-		rotation = (float) ((-Math.atan2(orientation.x, orientation.y) * 180 / Math.PI) + 180);
-		shotTime -= delta;
-		if (shotTime < 0){
-			if (Mouse.isButtonDown(0)){
-				Power shot = new BitStream(new Vector2f(shape.getX()+shape.getWidth()/2, shape.getY()+shape.getWidth()/2), orientation);
-				manager.addEntity(shot);
-				shotTime = shotFreq;
-			}
-			
+		if (Mouse.isButtonDown(0)){
+			((Blade) powers.get(0)).activate();
 		}
-		meleeTime -= delta;
-		if (meleeTime < 0){
-			if (Mouse.isButtonDown(1)){
-				melee = new BasicPunch(new Vector2f(shape.getX()+shape.getWidth()/2, shape.getY()+shape.getHeight()/2), (float) orientation.getTheta());
-				manager.addEntity(melee);
-				meleeTime = meleeFreq;
-			}
+		if (Mouse.isButtonDown(1)){
+			((Shot) powers.get(1)).activate();
 		}
+//		meleeTime -= delta;
+//		if (meleeTime < 0){
+//			if (Mouse.isButtonDown(1)){
+//				melee = new BasicPunch(new Vector2f(shape.getX()+shape.getWidth()/2, shape.getY()+shape.getHeight()/2), (float) orientation.getTheta());
+//				manager.addEntity(melee);
+//				meleeTime = meleeFreq;
+//			}
+//		}
 	}
 
 	@Override
@@ -160,18 +171,18 @@ public class Player extends AbstractEntity {
 
 	@Override
 	public void render(Graphics graphics) {
+		//graphics.rotate(shape.getCenterX(), shape.getCenterY(), (float) ((float) orientation.getTheta()*(Math.PI/180)));
 		particles.render(graphics);
 //		graphics.setColor(new Color(r,g,b,a));
 //		graphics.fill(new Circle(pos.x,pos.y,size()));
 //		graphics.setAntiAlias(true);
 //		graphics.draw(new Circle(pos.x,pos.y,size()));
 		graphics.setColor(new Color(r,g,b,a/1.5f));
-		graphics.fill(shape);
+		graphics.fill(shape.transform(Transform.createRotateTransform((float) ((float) orientation.getTheta()*(Math.PI/180)),shape.getCenterX(), shape.getCenterY())));
 		graphics.setAntiAlias(true);
 		graphics.setColor(new Color(r,g,b,a));
-		graphics.draw(shape);
+		graphics.draw(shape.transform(Transform.createRotateTransform((float) ((float) orientation.getTheta()*(Math.PI/180)),shape.getCenterX(), shape.getCenterY())));
 		//graphics.draw(bounds);
-		
 	}
 	
 	public Vector2f getPos(){
@@ -180,6 +191,10 @@ public class Player extends AbstractEntity {
 	
 	public int getHealth() {
 		return health;
+	}
+	
+	public void setPowers(ArrayList<Power> powers){
+		this.powers = powers;
 	}
 
 }

@@ -15,9 +15,13 @@ import com.supervillainy.game.entity.Entity;
 import com.supervillainy.game.entity.EntityManager;
 import com.supervillainy.game.entity.Player;
 import com.supervillainy.game.entity.enemy.TestEnemy;
+import com.supervillainy.game.entity.environment.Wall;
 import com.supervillainy.game.entity.particles.Particle;
 import com.supervillainy.game.gui.HealthBar;
 import com.supervillainy.game.map.Map;
+import com.supervillainy.game.power.Blade;
+import com.supervillainy.game.power.Power;
+import com.supervillainy.game.power.Shot;
 
 public class BattleState extends BasicGameState implements EntityManager {
 	
@@ -45,12 +49,29 @@ public class BattleState extends BasicGameState implements EntityManager {
 		
 		player = new Player();
 		entities.add(player);
+		ArrayList<Power> powers = new ArrayList<Power>();
+		powers.add(new Blade(player, true));
+		powers.add(new Shot(player));
+		for (Power power : powers){
+			entities.add(power);
+		}
+		player.setPowers(powers);
 		
 		for (int i = 0; i < 10; i++){
 			TestEnemy enemy = new TestEnemy(player);
 			entities.add(enemy);
 		}
 		health = new HealthBar(player);
+		Wall wall = new Wall(Map.dim.x/4+Map.pos.x, Map.dim.y/4+Map.pos.y, Map.dim.x/2, 50);
+		entities.add(wall);
+		wall = new Wall(Map.dim.x/4+Map.pos.x, Map.dim.y/4+Map.pos.y, 50, Map.dim.y/2);
+		entities.add(wall);
+		wall = new Wall(Map.dim.x/4+Map.pos.x + Map.dim.x/2, Map.dim.y/4+Map.pos.y, 50, Map.dim.y/2);
+		entities.add(wall);
+		wall = new Wall(Map.dim.x/4+Map.pos.x, Map.dim.y/4+Map.pos.y + Map.dim.y/2, Map.dim.x/5, 50);
+		entities.add(wall);
+		wall = new Wall(Map.dim.x/4+Map.pos.x+Map.dim.x/2-Map.dim.x/5+50, Map.dim.y/4+Map.pos.y + Map.dim.y/2, Map.dim.x/5, 50);
+		entities.add(wall);
 		paused = false;
 		super.enter(container, game);
 	}
@@ -93,6 +114,11 @@ public class BattleState extends BasicGameState implements EntityManager {
 				sbg.enterState(0, new FadeOutTransition(), new FadeInTransition());
 			}
 			map.update(delta);
+			
+			for (Entity e : entities) {
+				e.update(this, delta);
+			}
+			
 			for (int i=0;i<entities.size();i++) {
 				Entity entity = (Entity) entities.get(i);
 				
@@ -112,9 +138,7 @@ public class BattleState extends BasicGameState implements EntityManager {
 			removeList.clear();
 			addList.clear();
 			
-			for (Entity e : entities) {
-				e.update(this, delta);
-			}
+			
 			health.update();
 		} else {
 			if (gc.getInput().isKeyPressed(Keyboard.KEY_SPACE)){
